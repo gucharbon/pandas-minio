@@ -192,12 +192,12 @@ class PandasBucket:
         """
         Return a generator that yields minio created event records.
         """
-        for new_event in  self.listen_events(
+        for record in  self.listen_events(
             prefix = prefix,
             suffix = suffix,
             events = ['s3:ObjectCreated:*']
         ):
-            yield new_event
+            yield record
 
     def subscribe(
         self,
@@ -207,8 +207,7 @@ class PandasBucket:
         """
         Subscribe to new dataframes created in bucket.
         """
-        for event in self.listen_events_created(prefix=prefix, suffix=suffix):
-            record = event["Records"][0]
+        for record in self.listen_events_created(prefix=prefix, suffix=suffix):
             obj = record["s3"]["object"]
             name = obj["key"]
             yield self.read(name)
